@@ -9,11 +9,17 @@
         <dd>{{ transaction.data.invoice }}</dd>
         <dt>{% trans %}Payer e-mail{% endtrans %}</dt>
         <dd>{{ transaction.data.payer_email }}</dd>
+        <dt>{% trans %}Transaction Fees{% endtrans %}</dt>
+        <dd>{{ transaction.data.mc_fee }}</dd>
     {% endif %}
 {% endblock %}
 
 {% block warning_box %}
-    {% if transaction.amount != transaction.registration.price %}
+    {% set price = transaction.registration.price | float %}
+    {% set fee = transaction.data.mc_fee | float %}
+    {% set fullprice = price + fee %}
+    {% set amount = transaction.amount | float %}
+    {% if amount != fullprice %}
         {% call message_box('warning') %}
             <p>
                 {%- trans %}The paid amount does not match the required amount. Please contact the registrant to solve the issue.{% endtrans -%}
